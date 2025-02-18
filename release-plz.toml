@@ -1,0 +1,8 @@
+[workspace]
+pr_draft = true
+
+# Remove to re-enable publishing to crates.io
+publish = false
+
+[changelog]
+sort_commits = "oldest"

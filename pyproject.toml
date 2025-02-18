@@ -1,0 +1,14 @@
+# This pyproject.toml is only used to specify the dependencies used in the python utilities
+# in `scripts/`. The project is otherwise a Rust project, which calls `uv` with this file
+# internally when compiling guppy programs.
+[project]
+name = "guppyc"
+version = "0.0.0"
+requires-python = ">=3.10"
+
+[dependency-groups]
+dev = [
+    # Default version of the guppylang library.
+    # This should be overridden as needed by using `uv run --with guppylang=X.X.X`.
+    "guppylang>=0.15.0",
+]
