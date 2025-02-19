@@ -4,8 +4,6 @@ guppyc
 [![build_status][]](https://github.com/CQCL/guppyc/actions)
 [![crates][]](https://crates.io/crates/guppyc)
 [![msrv][]](https://github.com/CQCL/guppyc)
-[![codecov][]](https://codecov.io/gh/CQCL/guppyc)
-[![codspeed][]](https://codspeed.io/CQCL/guppyc)
 
 Compiler tools for the [guppylang](https://github.com/cqcl/guppylang) Quantum Programming Language.
 
@@ -29,6 +27,4 @@ This project is licensed under Apache License, Version 2.0 ([LICENSE][] or http:
   [crates]: https://img.shields.io/crates/v/guppyc
   [LICENSE]: LICENCE
   [msrv]: https://img.shields.io/badge/rust-1.75.0%2B-blue.svg?maxAge=3600
-  [codecov]: https://img.shields.io/codecov/c/gh/CQCL/guppyc?logo=codecov
-  [codspeed]: https://img.shields.io/endpoint?url=https://codspeed.io/badge.json
   [CHANGELOG]: CHANGELOG.md

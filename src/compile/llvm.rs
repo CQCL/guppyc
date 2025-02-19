@@ -1,6 +1,6 @@
 //! LLVM IR stage.
 
-use std::{any, fs};
+use std::fs;
 
 use hugr::llvm::CodegenExtsBuilder;
 use hugr::llvm::custom::CodegenExtsMap;
