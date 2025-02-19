@@ -75,7 +75,6 @@ pub enum OptimisationLevel {
 impl CliArgs {
     /// Run the CLI.
     pub fn run(&self) -> anyhow::Result<()> {
-        log::info!("Running with args: {:?}", self);
         self.validate()?;
 
         let mut stage = GuppyStage::new(&self.guppy_version, &self.input).wrap();

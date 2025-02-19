@@ -119,10 +119,11 @@ fn optimise_module<'a>(module: &Module<'a>, args: &CliArgs) -> anyhow::Result<()
 fn codegen_extensions() -> CodegenExtsMap<'static, Hugr> {
     CodegenExtsBuilder::default()
         .add_default_prelude_extensions()
+        .add_default_list_extensions()
+        .add_default_array_extensions()
         .add_int_extensions()
         .add_float_extensions()
         .add_conversion_extensions()
         .add_logic_extensions()
-        .add_default_array_extensions()
         .finish()
 }
