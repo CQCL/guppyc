@@ -9,7 +9,7 @@ use crate::cli::{CliArgs, GuppyVersion};
 use super::hugr::HugrStage;
 use super::{CompilationStage, GenericStage, Stage};
 
-const GUPPY_COMPILER_SCRIPT: &str = "compile_guppy.py";
+const GUPPY_COMPILER_SCRIPT: &str = include_str!("../../script/compile_guppy.py");
 
 /// A guppy file.
 #[derive(Debug, Clone)]
@@ -117,6 +117,11 @@ impl GuppyVersion {
 }
 
 /// Returns the path to the guppy compiler script.
+///
+/// Writes the embedded guppy compiler script to a temporary file and returns the path to it.
 pub fn guppy_compiler_script() -> PathBuf {
-    PathBuf::from("script").join(GUPPY_COMPILER_SCRIPT)
+    let path = std::env::temp_dir().join("compile_guppy.py");
+    log::info!("Writing guppy compiler script to {}", path.display());
+    std::fs::write(&path, GUPPY_COMPILER_SCRIPT).expect("Failed to write guppy compiler script");
+    path
 }

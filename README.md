@@ -9,6 +9,31 @@ Compiler tools for the [guppylang](https://github.com/cqcl/guppylang) Quantum Pr
 
 Please read the [API documentation here][].
 
+## Usage
+
+`guppyc` can be installed via `cargo`:
+
+```sh
+# Install latest version
+cargo install guppyc
+# Or install the local project
+cargo install --path .
+```
+
+Then you can use it to compile a `.gpy`/`.py` file:
+
+```sh
+guppyc \
+  test_files/even_odd.py  `# The input file` \
+  --hugr even_odd.hugr    `# Output hugr JSON file` \
+  --mermaid even_odd.mmd  `# Output hugr Mermaid file` \
+  --llvm even_odd.ll      `# Output LLVM IR text file` \
+  --bitcode even_odd.o    `# Output LLVM bitcode file` \
+  --guppy-version 0.15.0  `# Fix the version of the guppylang compiler` \
+```
+
+For more information, run `guppyc --help`.
+
 ## Recent Changes
 
 See [CHANGELOG][] for a list of changes. The minimum supported rust
