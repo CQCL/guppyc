@@ -24,10 +24,13 @@ pub struct CliArgs {
     /// Output the llvm bitcode file.
     #[clap(long)]
     pub bitcode: Option<PathBuf>,
-    /// Optional path to output the HUGR json.
+    /// Optional output path for the HUGR json.
     #[clap(long)]
     pub hugr: Option<PathBuf>,
-    /// Optional path to output the mermaid rendering of the HUGR.
+    /// Optional output path for the S-expression representation of the HUGR.
+    #[clap(long)]
+    pub sexpr: Option<PathBuf>,
+    /// Optional output path for the mermaid rendering of the HUGR.
     #[clap(short, long)]
     pub mermaid: Option<PathBuf>,
     /// The function name to use as entrypoint.
@@ -78,7 +81,7 @@ impl CliArgs {
         self.validate()?;
 
         let mut stage = GuppyStage::new(&self.guppy_version, &self.input).wrap();
-        let last = self.last_stage();
+        let last = Stage::last_required(self);
 
         while stage.stage() < last {
             stage = stage.compile(&self)?;
@@ -92,17 +95,6 @@ impl CliArgs {
     pub fn validate(&self) -> anyhow::Result<()> {
         self.guppy_version.validate()?;
         Ok(())
-    }
-
-    /// Return the latest compilation stage required to produce the artifacts specified by the CLI arguments.
-    pub fn last_stage(&self) -> Stage {
-        if self.llvm.is_some() || self.bitcode.is_some() {
-            Stage::LLVM
-        } else if self.hugr.is_some() || self.mermaid.is_some() {
-            Stage::Hugr
-        } else {
-            Stage::GuppyProgram
-        }
     }
 }
 

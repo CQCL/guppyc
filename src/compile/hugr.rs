@@ -26,7 +26,7 @@ impl CompilationStage for HugrStage {
     }
 
     fn compile(mut self, args: &CliArgs) -> anyhow::Result<GenericStage> {
-        log::info!("Compiling Hugr to LLVM IR");
+        log::debug!("Compiling Hugr to LLVM IR");
         let entrypoint = match &args.entrypoint {
             Some(fn_name) => Some(self.find_funcdef_node(fn_name)?),
             None => None,
@@ -38,19 +38,27 @@ impl CompilationStage for HugrStage {
 
     fn store(&self, args: &crate::cli::CliArgs) -> anyhow::Result<()> {
         if let Some(mermaid_out) = &args.mermaid {
-            log::info!(
-                "Storing mermaid output to {}",
-                mermaid_out.to_string_lossy()
-            );
+            log::debug!("Storing mermaid output to {}", mermaid_out.display());
             let mermaid = self.pkg.modules[0].mermaid_string();
             fs::write(mermaid_out, mermaid)?;
         }
 
         if let Some(hugr_out) = &args.hugr {
-            log::info!("Storing Hugr output to {}", hugr_out.to_string_lossy());
+            log::debug!("Storing Hugr output to {}", hugr_out.display());
             let file = fs::File::create(hugr_out)?;
             let writer = io::BufWriter::new(file);
             self.pkg.to_json_writer(writer)?;
+        }
+
+        if let Some(hugr_sexpr_out) = &args.sexpr {
+            log::debug!(
+                "Storing Hugr S-expression output to {}",
+                hugr_sexpr_out.display()
+            );
+            let bump = bumpalo::Bump::new();
+            let model = hugr_core::export::export_hugr(&self.pkg.modules[0], &bump);
+            let sexpr = hugr_model::v0::text::print_to_string(&model, 120)?;
+            fs::write(hugr_sexpr_out, sexpr)?;
         }
 
         Ok(())

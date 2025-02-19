@@ -1,5 +1,7 @@
 //! Compilation stage definitions.
 
+use strum::IntoEnumIterator;
+
 use crate::cli::CliArgs;
 
 pub mod guppy;
@@ -43,6 +45,27 @@ pub trait CompilationStage: Sized {
 
     /// Store any data that needs to be stored, according to the program arguments.
     fn store(&self, args: &CliArgs) -> anyhow::Result<()>;
+}
+
+impl Stage {
+    /// Returns `true` if the stage is required to produce the specified artifacts.
+    pub fn required(&self, args: &CliArgs) -> bool {
+        match self {
+            Stage::GuppyProgram => true,
+            Stage::Hugr => args.hugr.is_some() || args.mermaid.is_some() || args.sexpr.is_some(),
+            Stage::LLVM => args.llvm.is_some() || args.bitcode.is_some(),
+        }
+    }
+
+    /// Return the latest compilation stage required to produce the artifacts specified by the CLI arguments.
+    pub fn last_required(args: &CliArgs) -> Stage {
+        for stage in Stage::iter().rev() {
+            if stage.required(args) {
+                return stage;
+            }
+        }
+        Stage::GuppyProgram
+    }
 }
 
 impl CompilationStage for GenericStage {
