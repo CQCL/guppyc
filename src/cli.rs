@@ -33,6 +33,9 @@ pub struct CliArgs {
     /// The function name to use as entrypoint.
     #[clap(short, long)]
     pub entrypoint: Option<String>,
+    /// Optimisation level.
+    #[clap(short, long, default_value = "2", value_parser = OptimisationLevel::from_str)]
+    pub opt: OptimisationLevel,
     /// Verbosity level.
     #[clap(flatten)]
     pub verbosity: Verbosity<InfoLevel>,
@@ -54,6 +57,19 @@ pub struct GuppyVersion {
     /// Incompatible with `guppy_version`.
     #[clap(long)]
     pub guppy_ref: Option<String>,
+}
+
+/// Optimisation level.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum OptimisationLevel {
+    /// No optimisation.
+    O0 = 0,
+    /// Less optimisation.
+    O1 = 1,
+    /// Default level of optimisation.
+    O2 = 2,
+    /// Aggressive optimisation.
+    O3 = 3,
 }
 
 impl CliArgs {
@@ -101,5 +117,18 @@ impl GuppyVersion {
         }
 
         Ok(())
+    }
+}
+
+impl OptimisationLevel {
+    /// Parse an optimisation level from a string.
+    pub fn from_str(s: &str) -> Result<Self, String> {
+        match s {
+            "0" => Ok(Self::O0),
+            "1" => Ok(Self::O1),
+            "2" => Ok(Self::O2),
+            "3" => Ok(Self::O3),
+            _ => Err(format!("Invalid optimisation level: {s}")),
+        }
     }
 }

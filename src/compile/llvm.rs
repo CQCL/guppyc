@@ -7,10 +7,11 @@ use hugr::llvm::custom::CodegenExtsMap;
 use hugr::llvm::inkwell::context::Context;
 use hugr::llvm::inkwell::memory_buffer::MemoryBuffer;
 use hugr::llvm::inkwell::module::Module;
+use hugr::llvm::inkwell::passes::PassManager;
 use hugr::llvm::utils::fat::FatExt;
 use hugr::{Hugr, Node};
 
-use crate::cli::CliArgs;
+use crate::cli::{CliArgs, OptimisationLevel};
 
 use super::{CompilationStage, GenericStage, Stage};
 
@@ -65,6 +66,8 @@ impl LLVMStage {
 
         let context = Context::create();
         let module = compile_module(&hugr, &context, namer)?;
+        optimise_module(&module, args)?;
+
         let module_bitcode = module.write_bitcode_to_memory();
         let module_text = match args.llvm {
             Some(_) => Some(module.to_string()),
@@ -94,6 +97,23 @@ fn compile_module<'a>(
     let emitter = emitter.emit_module(hugr_module)?;
 
     Ok(emitter.finish())
+}
+
+// Run some standard optimisations on the module.
+fn optimise_module<'a>(module: &Module<'a>, args: &CliArgs) -> anyhow::Result<()> {
+    if args.opt == OptimisationLevel::O0 {
+        return Ok(());
+    }
+
+    let pb = PassManager::create(());
+    pb.add_promote_memory_to_register_pass();
+    pb.add_scalar_repl_aggregates_pass();
+    pb.add_cfg_simplification_pass();
+    pb.add_aggressive_inst_combiner_pass();
+    pb.add_aggressive_dce_pass();
+    pb.run_on(module);
+
+    Ok(())
 }
 
 fn codegen_extensions() -> CodegenExtsMap<'static, Hugr> {
