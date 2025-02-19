@@ -2,12 +2,14 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::cli::GuppyVersion;
+use itertools::Itertools;
+
+use crate::cli::{CliArgs, GuppyVersion};
 
 use super::hugr::HugrStage;
 use super::{CompilationStage, GenericStage, Stage};
 
-const GUPPY_COMPILER_SCRIPT: &str = "guppy-compiler";
+const GUPPY_COMPILER_SCRIPT: &str = "compile_guppy.py";
 
 /// A guppy file.
 #[derive(Debug, Clone)]
@@ -27,7 +29,7 @@ impl CompilationStage for GuppyStage {
         GenericStage::GuppyProgram(self)
     }
 
-    fn compile(self) -> anyhow::Result<GenericStage> {
+    fn compile(self, _args: &CliArgs) -> anyhow::Result<GenericStage> {
         // Execute the guppy compilation script using uv to set the guppylang version.
         // This will output the HUGR json file.
 
@@ -35,7 +37,7 @@ impl CompilationStage for GuppyStage {
         let args = self.uv_args()?;
 
         // Run the script, capturing the output.
-        log::info!("Running uv with args: {args:?}");
+        log::info!("Running uv with args: {}", args.iter().join(", "));
         let output = std::process::Command::new(UV).args(args).output();
 
         let output = match output {
@@ -44,6 +46,15 @@ impl CompilationStage for GuppyStage {
                 return Err(anyhow::anyhow!("Failed to execute uv. {e}"));
             }
         };
+
+        if !output.status.success() {
+            return Err(anyhow::anyhow!(
+                "Failed to execute uv. Exit code: {}.\n{}",
+                output.status.code().unwrap_or(-1),
+                String::from_utf8_lossy(&output.stderr)
+            ));
+        }
+
         let stdout = String::from_utf8(output.stdout)?;
 
         Ok(HugrStage::from_json(stdout)?.wrap())
@@ -75,11 +86,13 @@ impl GuppyStage {
     /// Returns the `uv` command arguments to execute the guppy compilation script.
     pub fn uv_args(&self) -> anyhow::Result<Vec<String>> {
         let args = vec![
+            "run".to_string(),
             "--with".to_string(),
             self.version.uv_version()?,
             "python".to_string(),
             "-I".to_string(),
             guppy_compiler_script().to_string_lossy().to_string(),
+            self.path.to_string_lossy().to_string(),
         ];
         Ok(args)
     }
@@ -105,5 +118,5 @@ impl GuppyVersion {
 
 /// Returns the path to the guppy compiler script.
 pub fn guppy_compiler_script() -> PathBuf {
-    PathBuf::from("scripts").join(GUPPY_COMPILER_SCRIPT)
+    PathBuf::from("script").join(GUPPY_COMPILER_SCRIPT)
 }

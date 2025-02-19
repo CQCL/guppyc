@@ -20,7 +20,7 @@ pub enum Stage {
 }
 
 /// Data for a compilation stage.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum GenericStage {
     /// Guppy program.
     GuppyProgram(guppy::GuppyStage),
@@ -39,7 +39,7 @@ pub trait CompilationStage: Sized {
     fn wrap(self) -> GenericStage;
 
     /// Compile the object into the next stage.
-    fn compile(self) -> anyhow::Result<GenericStage>;
+    fn compile(self, args: &CliArgs) -> anyhow::Result<GenericStage>;
 
     /// Store any data that needs to be stored, according to the program arguments.
     fn store(&self, args: &CliArgs) -> anyhow::Result<()>;
@@ -58,11 +58,11 @@ impl CompilationStage for GenericStage {
         self
     }
 
-    fn compile(self) -> anyhow::Result<GenericStage> {
+    fn compile(self, args: &CliArgs) -> anyhow::Result<GenericStage> {
         match self {
-            GenericStage::GuppyProgram(guppy) => guppy.compile(),
-            GenericStage::Hugr(hugr) => hugr.compile(),
-            GenericStage::LLVM(llvm) => llvm.compile(),
+            GenericStage::GuppyProgram(guppy) => guppy.compile(args),
+            GenericStage::Hugr(hugr) => hugr.compile(args),
+            GenericStage::LLVM(llvm) => llvm.compile(args),
         }
     }
 

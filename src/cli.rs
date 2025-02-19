@@ -18,15 +18,21 @@ pub struct CliArgs {
     /// Guppy language version to use.
     #[clap(flatten)]
     pub guppy_version: GuppyVersion,
-    /// Output llvm object file.
+    /// Output llvm text file.
     #[clap(short, long)]
     pub llvm: Option<PathBuf>,
+    /// Output the llvm bitcode file.
+    #[clap(long)]
+    pub bitcode: Option<PathBuf>,
     /// Optional path to output the HUGR json.
     #[clap(long)]
     pub hugr: Option<PathBuf>,
     /// Optional path to output the mermaid rendering of the HUGR.
     #[clap(short, long)]
     pub mermaid: Option<PathBuf>,
+    /// The function name to use as entrypoint.
+    #[clap(short, long, default_value = "main")]
+    pub entrypoint: String,
     /// Verbosity level.
     #[clap(flatten)]
     pub verbosity: Verbosity<InfoLevel>,
@@ -60,7 +66,7 @@ impl CliArgs {
         let last = self.last_stage();
 
         while stage.stage() < last {
-            stage = stage.compile()?;
+            stage = stage.compile(&self)?;
             stage.store(&self)?;
         }
 
@@ -75,7 +81,7 @@ impl CliArgs {
 
     /// Return the latest compilation stage required to produce the artifacts specified by the CLI arguments.
     pub fn last_stage(&self) -> Stage {
-        if self.llvm.is_some() {
+        if self.llvm.is_some() || self.bitcode.is_some() {
             Stage::LLVM
         } else if self.hugr.is_some() || self.mermaid.is_some() {
             Stage::Hugr
