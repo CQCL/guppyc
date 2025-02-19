@@ -37,7 +37,7 @@ class GuppyCompiler:
             input_path if not temp_file else None,
             module_name=module_name,
         )
-        pkg = module.compile().to_executable_package().package
+        pkg = module.compile().package
         return pkg.to_json()
 
     def _get_module(

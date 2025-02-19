@@ -27,7 +27,10 @@ impl CompilationStage for HugrStage {
 
     fn compile(mut self, args: &CliArgs) -> anyhow::Result<GenericStage> {
         log::info!("Compiling Hugr to LLVM IR");
-        let entrypoint = self.find_funcdef_node(&args.entrypoint)?;
+        let entrypoint = match &args.entrypoint {
+            Some(fn_name) => Some(self.find_funcdef_node(fn_name)?),
+            None => None,
+        };
         self.guppy_pass(entrypoint)?;
         let hugr = mem::take(&mut self.pkg.modules[0]);
         Ok(LLVMStage::from_hugr(hugr, entrypoint, args)?.wrap())
@@ -117,11 +120,13 @@ impl HugrStage {
         Ok(fn_nodes[0])
     }
 
-    fn guppy_pass(&mut self, entrypoint: Node) -> anyhow::Result<()> {
+    fn guppy_pass(&mut self, entrypoint: Option<Node>) -> anyhow::Result<()> {
         hugr::algorithms::MonomorphizePass::default().run(self.hugr_mut())?;
-        hugr::algorithms::RemoveDeadFuncsPass::default()
-            .with_module_entry_points([entrypoint])
-            .run(self.hugr_mut())?;
+        if let Some(entrypoint) = entrypoint {
+            hugr::algorithms::RemoveDeadFuncsPass::default()
+                .with_module_entry_points([entrypoint])
+                .run(self.hugr_mut())?
+        }
         Ok(())
     }
 }

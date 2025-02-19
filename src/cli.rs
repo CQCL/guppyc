@@ -31,8 +31,8 @@ pub struct CliArgs {
     #[clap(short, long)]
     pub mermaid: Option<PathBuf>,
     /// The function name to use as entrypoint.
-    #[clap(short, long, default_value = "main")]
-    pub entrypoint: String,
+    #[clap(short, long)]
+    pub entrypoint: Option<String>,
     /// Verbosity level.
     #[clap(flatten)]
     pub verbosity: Verbosity<InfoLevel>,

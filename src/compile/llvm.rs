@@ -25,7 +25,7 @@ pub struct LLVMStage {
     /// `Module` lifetimes and buffer ownership -.-
     pub module_text: Option<String>,
     /// Mangled name of the entrypoint function.
-    pub entrypoint: String,
+    pub entrypoint: Option<String>,
 }
 
 impl CompilationStage for LLVMStage {
@@ -58,9 +58,10 @@ impl LLVMStage {
     /// Lower a HUGR into LLVM.
     ///
     /// Assumes any hugr-side rewrites have already been done.
-    pub fn from_hugr(hugr: Hugr, entrypoint: Node, args: &CliArgs) -> anyhow::Result<Self> {
+    pub fn from_hugr(hugr: Hugr, entrypoint: Option<Node>, args: &CliArgs) -> anyhow::Result<Self> {
         let namer = hugr::llvm::emit::Namer::default();
-        let mangled_name = namer.name_func(&args.entrypoint, entrypoint);
+        let mangled_name = entrypoint
+            .map(|entrypoint| namer.name_func(args.entrypoint.as_ref().unwrap(), entrypoint));
 
         let context = Context::create();
         let module = compile_module(&hugr, &context, namer)?;
