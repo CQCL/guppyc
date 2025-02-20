@@ -124,5 +124,9 @@ fn codegen_extensions() -> CodegenExtsMap<'static, Hugr> {
         .add_float_extensions()
         .add_conversion_extensions()
         .add_logic_extensions()
+        .add_extension(hugr_qir::rotation::RotationCodegenExtension::new(
+            hugr_qir::qir::QirPreludeCodegen,
+        ))
+        .add_extension(hugr_qir::qir::QirCodegenExtension)
         .finish()
 }
