@@ -15,24 +15,6 @@ use crate::compile::{CompilationStage, Stage};
 pub struct CliArgs {
     /// Input guppy file.
     pub input: PathBuf,
-    /// Guppy language version to use.
-    #[clap(flatten)]
-    pub guppy_version: GuppyVersion,
-    /// Output llvm text file.
-    #[clap(short, long)]
-    pub llvm: Option<PathBuf>,
-    /// Output the llvm bitcode file.
-    #[clap(long)]
-    pub bitcode: Option<PathBuf>,
-    /// Optional output path for the HUGR json.
-    #[clap(long)]
-    pub hugr: Option<PathBuf>,
-    /// Optional output path for the S-expression representation of the HUGR.
-    #[clap(long)]
-    pub sexpr: Option<PathBuf>,
-    /// Optional output path for the mermaid rendering of the HUGR.
-    #[clap(short, long)]
-    pub mermaid: Option<PathBuf>,
     /// The function name to use as entrypoint.
     #[clap(short, long)]
     pub entrypoint: Option<String>,
@@ -42,6 +24,32 @@ pub struct CliArgs {
     /// Verbosity level.
     #[clap(flatten)]
     pub verbosity: Verbosity<InfoLevel>,
+    /// Guppy language version to use.
+    #[clap(flatten)]
+    pub guppy_version: GuppyVersion,
+    /// Output format options.
+    #[clap(flatten)]
+    pub output: OutputFormat,
+}
+
+/// Output format options
+#[derive(Args, Debug, Clone)]
+pub struct OutputFormat {
+    /// Optional output path for the HUGR json.
+    #[clap(long, help_heading = "Output artifacts")]
+    pub hugr: Option<PathBuf>,
+    /// Optional output path for the S-expression representation of the HUGR.
+    #[clap(long, help_heading = "Output artifacts")]
+    pub sexpr: Option<PathBuf>,
+    /// Optional output path for the mermaid rendering of the HUGR.
+    #[clap(short, long, help_heading = "Output artifacts")]
+    pub mermaid: Option<PathBuf>,
+    /// Output llvm text file.
+    #[clap(short, long, help_heading = "Output artifacts")]
+    pub llvm: Option<PathBuf>,
+    /// Output the llvm bitcode file.
+    #[clap(short, long, help_heading = "Output artifacts")]
+    pub bitcode: Option<PathBuf>,
 }
 
 /// Argument to specify the guppy language version, either using semver or a git ref.
@@ -50,15 +58,15 @@ pub struct GuppyVersion {
     /// The guppy version to use.
     /// Defaults to the latest published version.
     /// Incompatible with `guppy_git` and `guppy_ref`.
-    #[clap(long)]
+    #[clap(long, help_heading = "Guppy version")]
     pub guppy_version: Option<Version>,
     /// The git repository to fetch guppy from.
     /// Incompatible with `guppy_version`.
-    #[clap(long)]
+    #[clap(long, help_heading = "Guppy version")]
     pub guppy_git: Option<String>,
     /// The git commit or branch to use.
     /// Incompatible with `guppy_version`.
-    #[clap(long)]
+    #[clap(long, help_heading = "Guppy version")]
     pub guppy_ref: Option<String>,
 }
 

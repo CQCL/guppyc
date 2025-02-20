@@ -43,11 +43,13 @@ impl CompilationStage for LLVMStage {
     }
 
     fn store(&self, args: &CliArgs) -> anyhow::Result<()> {
-        if let Some(llvm) = &args.llvm {
+        let out = &args.output;
+
+        if let Some(llvm) = &out.llvm {
             fs::write(llvm, self.module_text.as_ref().unwrap())?;
         }
 
-        if let Some(bitcode) = &args.bitcode {
+        if let Some(bitcode) = &out.bitcode {
             fs::write(bitcode, self.module_bitcode.as_slice())?;
         }
 
@@ -69,7 +71,7 @@ impl LLVMStage {
         optimise_module(&module, args)?;
 
         let module_bitcode = module.write_bitcode_to_memory();
-        let module_text = match args.llvm {
+        let module_text = match args.output.llvm {
             Some(_) => Some(module.to_string()),
             None => None,
         };

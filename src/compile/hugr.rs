@@ -37,20 +37,22 @@ impl CompilationStage for HugrStage {
     }
 
     fn store(&self, args: &crate::cli::CliArgs) -> anyhow::Result<()> {
-        if let Some(mermaid_out) = &args.mermaid {
+        let out = &args.output;
+
+        if let Some(mermaid_out) = &out.mermaid {
             log::debug!("Storing mermaid output to {}", mermaid_out.display());
             let mermaid = self.pkg.modules[0].mermaid_string();
             fs::write(mermaid_out, mermaid)?;
         }
 
-        if let Some(hugr_out) = &args.hugr {
+        if let Some(hugr_out) = &out.hugr {
             log::debug!("Storing Hugr output to {}", hugr_out.display());
             let file = fs::File::create(hugr_out)?;
             let writer = io::BufWriter::new(file);
             self.pkg.to_json_writer(writer)?;
         }
 
-        if let Some(hugr_sexpr_out) = &args.sexpr {
+        if let Some(hugr_sexpr_out) = &out.sexpr {
             log::debug!(
                 "Storing Hugr S-expression output to {}",
                 hugr_sexpr_out.display()

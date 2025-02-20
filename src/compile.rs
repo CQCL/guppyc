@@ -50,10 +50,11 @@ pub trait CompilationStage: Sized {
 impl Stage {
     /// Returns `true` if the stage is required to produce the specified artifacts.
     pub fn required(&self, args: &CliArgs) -> bool {
+        let out = &args.output;
         match self {
             Stage::GuppyProgram => true,
-            Stage::Hugr => args.hugr.is_some() || args.mermaid.is_some() || args.sexpr.is_some(),
-            Stage::LLVM => args.llvm.is_some() || args.bitcode.is_some(),
+            Stage::Hugr => out.hugr.is_some() || out.mermaid.is_some() || out.sexpr.is_some(),
+            Stage::LLVM => out.llvm.is_some() || out.bitcode.is_some(),
         }
     }
 
