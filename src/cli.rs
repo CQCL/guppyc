@@ -18,7 +18,7 @@ pub struct CliArgs {
     /// Input file.
     #[clap(flatten)]
     pub input: InputFile,
-    /// The function name to use as entrypoint.
+    /// Function name to use as entrypoint.
     #[clap(short, long)]
     pub entrypoint: Option<String>,
     /// Optimisation level.
@@ -50,19 +50,19 @@ pub struct InputFile {
 /// Output format options
 #[derive(Args, Debug, Clone)]
 pub struct OutputFormat {
-    /// Optional output path for the HUGR json.
+    /// Store the intermediate HUGR as json.
     #[clap(long, help_heading = "Output artifacts")]
     pub hugr: Option<PathBuf>,
-    /// Optional output path for the S-expression representation of the HUGR.
+    /// Store the intermediate HUGR as an S-expression.
     #[clap(long, help_heading = "Output artifacts")]
     pub sexpr: Option<PathBuf>,
-    /// Optional output path for the mermaid rendering of the HUGR.
+    /// Store the mermaid diagram for the HUGR.
     #[clap(short, long, help_heading = "Output artifacts")]
     pub mermaid: Option<PathBuf>,
-    /// Output llvm text file.
+    /// LLVM IR (text) output
     #[clap(short, long, help_heading = "Output artifacts")]
     pub llvm: Option<PathBuf>,
-    /// Output the llvm bitcode file.
+    /// LLVM Bitcode output
     #[clap(short, long, help_heading = "Output artifacts")]
     pub bitcode: Option<PathBuf>,
 }
@@ -71,15 +71,18 @@ pub struct OutputFormat {
 #[derive(Args, Debug, Default, Clone)]
 pub struct GuppyVersion {
     /// The guppy version to use.
+    ///
     /// Defaults to the latest published version.
     /// Incompatible with `guppy_git` and `guppy_ref`.
     #[clap(long, help_heading = "Guppy version")]
     pub guppy_version: Option<Version>,
     /// The git repository to fetch guppy from.
+    ///
     /// Incompatible with `guppy_version`.
     #[clap(long, help_heading = "Guppy version")]
     pub guppy_git: Option<String>,
     /// The git commit or branch to use.
+    ///
     /// Incompatible with `guppy_version`.
     #[clap(long, help_heading = "Guppy version")]
     pub guppy_ref: Option<String>,
