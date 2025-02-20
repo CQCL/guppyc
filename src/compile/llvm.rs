@@ -71,10 +71,7 @@ impl LLVMStage {
         optimise_module(&module, args)?;
 
         let module_bitcode = module.write_bitcode_to_memory();
-        let module_text = match args.output.llvm {
-            Some(_) => Some(module.to_string()),
-            None => None,
-        };
+        let module_text = args.output.llvm.as_ref().map(|_| module.to_string());
 
         Ok(Self {
             module_bitcode,
@@ -102,7 +99,7 @@ fn compile_module<'a>(
 }
 
 // Run some standard optimisations on the module.
-fn optimise_module<'a>(module: &Module<'a>, args: &CliArgs) -> anyhow::Result<()> {
+fn optimise_module(module: &Module<'_>, args: &CliArgs) -> anyhow::Result<()> {
     if args.opt == OptimisationLevel::O0 {
         return Ok(());
     }

@@ -19,7 +19,7 @@ pub struct CliArgs {
     #[clap(short, long)]
     pub entrypoint: Option<String>,
     /// Optimisation level.
-    #[clap(short, long, default_value = "2", value_parser = OptimisationLevel::from_str)]
+    #[clap(short, long, default_value = "2", value_parser = OptimisationLevel::parse)]
     pub opt: OptimisationLevel,
     /// Verbosity level.
     #[clap(flatten)]
@@ -92,8 +92,8 @@ impl CliArgs {
         let last = Stage::last_required(self);
 
         while stage.stage() < last {
-            stage = stage.compile(&self)?;
-            stage.store(&self)?;
+            stage = stage.compile(self)?;
+            stage.store(self)?;
         }
 
         Ok(())
@@ -121,7 +121,7 @@ impl GuppyVersion {
 
 impl OptimisationLevel {
     /// Parse an optimisation level from a string.
-    pub fn from_str(s: &str) -> Result<Self, String> {
+    pub fn parse(s: &str) -> Result<Self, String> {
         match s {
             "0" => Ok(Self::O0),
             "1" => Ok(Self::O1),

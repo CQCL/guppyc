@@ -98,7 +98,7 @@ impl HugrStage {
         // Return the function name of an operation, if it is a FuncDefn.
         fn get_fn_name(op: &ops::OpType) -> Option<&str> {
             match op {
-                ops::OpType::FuncDefn(ops::FuncDefn { name, .. }) => Some(&name),
+                ops::OpType::FuncDefn(ops::FuncDefn { name, .. }) => Some(name),
                 _ => None,
             }
         }
