@@ -34,23 +34,19 @@ guppyc \
 
 For more information, see `guppyc --help`.
 ```sh
-Usage: guppyc [OPTIONS] <INPUT>
-
-Arguments:
-  <INPUT>  Input guppy file
+Usage: guppyc [OPTIONS] <input|--hugr-input <HUGR_INPUT>>
 
 Options:
   -e, --entrypoint <ENTRYPOINT>  The function name to use as entrypoint
-  -o, --opt <OPT>                Optimisation level [default: 2]
+  -o, --opt <OPT>                Optimisation level [default: 2] [possible values: 0, 1, 2, 3]
   -v, --verbose...               Increase logging verbosity
   -q, --quiet...                 Decrease logging verbosity
-  -h, --help                     Print help
+  -h, --help                     Print help (see more with '--help')
   -V, --version                  Print version
 
-Guppy version:
-      --guppy-version <GUPPY_VERSION>  The guppy version to use. Defaults to the latest published version. Incompatible with `guppy_git` and `guppy_ref`
-      --guppy-git <GUPPY_GIT>          The git repository to fetch guppy from. Incompatible with `guppy_version`
-      --guppy-ref <GUPPY_REF>          The git commit or branch to use. Incompatible with `guppy_version`
+Input format:
+      --hugr-input <HUGR_INPUT>  A `.hugr` file
+  [input]                    A guppy program definition
 
 Output artifacts:
       --hugr <HUGR>        Optional output path for the HUGR json
@@ -58,6 +54,11 @@ Output artifacts:
   -m, --mermaid <MERMAID>  Optional output path for the mermaid rendering of the HUGR
   -l, --llvm <LLVM>        Output llvm text file
   -b, --bitcode <BITCODE>  Output the llvm bitcode file
+
+Guppy version:
+      --guppy-version <GUPPY_VERSION>  The guppy version to use. Defaults to the latest published version. Incompatible with `guppy_git` and `guppy_ref`
+      --guppy-git <GUPPY_GIT>          The git repository to fetch guppy from. Incompatible with `guppy_version`
+      --guppy-ref <GUPPY_REF>          The git commit or branch to use. Incompatible with `guppy_version`
 ```
 
 ## Recent Changes
