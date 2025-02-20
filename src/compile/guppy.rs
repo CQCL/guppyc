@@ -29,16 +29,16 @@ impl CompilationStage for GuppyStage {
         GenericStage::GuppyProgram(self)
     }
 
-    fn compile(self, _args: &CliArgs) -> anyhow::Result<GenericStage> {
+    fn compile(self, args: &CliArgs) -> anyhow::Result<GenericStage> {
         // Execute the guppy compilation script using uv to set the guppylang version.
         // This will output the HUGR json file.
 
         const UV: &str = "uv";
-        let args = self.uv_args()?;
+        let cmd_args = self.uv_args()?;
 
         // Run the script, capturing the output.
-        log::info!("Running uv with args: {}", args.iter().join(", "));
-        let output = std::process::Command::new(UV).args(args).output();
+        log::info!("Running uv with args: {}", cmd_args.iter().join(", "));
+        let output = std::process::Command::new(UV).args(cmd_args).output();
 
         let output = match output {
             Ok(out) => out,
@@ -48,10 +48,15 @@ impl CompilationStage for GuppyStage {
         };
 
         if !output.status.success() {
+            let guppy_err = String::from_utf8_lossy(&output.stderr);
+
+            if !args.verbosity.is_silent() {
+                println!("{guppy_err}");
+            }
+
             return Err(anyhow::anyhow!(
-                "Failed to execute uv. Exit code: {}.\n{}",
-                output.status.code().unwrap_or(-1),
-                String::from_utf8_lossy(&output.stderr)
+                "Failed to execute uv. Exit code: {}.\n{guppy_err}",
+                output.status.code().unwrap_or(-1)
             ));
         }
 

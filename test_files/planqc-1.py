@@ -4,7 +4,7 @@ from guppylang.std.angles import angle
 
 
 @guppy
-def rx(q: qubit, a: float) -> None:
+def rx(q: qubit, a: float):
     # Implement Rx via Rz rotation
     h(q)
     rz(q, angle(a))

@@ -9,16 +9,22 @@ Compiler tools for the [guppylang](https://github.com/cqcl/guppylang) Quantum Pr
 
 Please read the [API documentation here][].
 
-## Usage
+## Installation
 
 `guppyc` can be installed via `cargo`:
 
 ```sh
 # Install latest version
-cargo install guppyc
+cargo install --git https://github.com/CQCL/guppyc.git
 # Or install the local project
 cargo install --path .
 ```
+
+You will also need the following tools:
+- uv `>=0.6`: [docs.astral.sh](https://docs.astral.sh/uv/getting-started/installation/)
+- LLVM 14: [llvm.org](https://llvm.org/docs/GettingStarted.html)
+
+## Usage
 
 Then you can use it to compile a `.gpy`/`.py` file:
 
